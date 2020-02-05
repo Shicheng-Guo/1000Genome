@@ -1,3 +1,4 @@
+#############################################
 cd ~/hpc/db/hg19/beagle
 for i in {1..22} X Y
 do
@@ -10,6 +11,10 @@ wget http://bochet.gcc.biostat.washington.edu/beagle/1000_Genomes_phase3_v5a/sam
 wget http://bochet.gcc.biostat.washington.edu/beagle/1000_Genomes_phase3_v5a/sample_info/integrated_call_samples_v3.20130502.ALL.panel
 mkdir EUR
 mkdir EAS
+
+grep EUR integrated_call_samples_v3.20130502.ALL.panel | awk '{print $1}'> EUR.List.txt
+grep EAS integrated_call_samples_v3.20130502.ALL.panel | awk '{print $1}' > EAS.List.txt
+
 mkdir temp
 for i in {1..22} X Y
 do
@@ -20,8 +25,8 @@ echo \#PBS -m abe  >> $i.job
 echo \#PBS -o $(pwd)/temp/ >>$i.job
 echo \#PBS -e $(pwd)/temp/ >>$i.job
 echo cd $(pwd) >> $i.job
-echo tabix -p vcf chr$i.1kg.phase3.v5a.vcf.gz >> $i.job
-echo bcftools view chr$i.1kg.phase3.v5a.vcf.gz -S EUR.List.txt -Oz -o ./EUR/chr$i.1kg.phase3.v5a.EUR.vcf.gz >>$i.job
+# echo tabix -p vcf chr$i.1kg.phase3.v5a.vcf.gz >> $i.job
+# echo bcftools view chr$i.1kg.phase3.v5a.vcf.gz -S EUR.List.txt -Oz -o ./EUR/chr$i.1kg.phase3.v5a.EUR.vcf.gz >>$i.job
 echo bcftools view chr$i.1kg.phase3.v5a.vcf.gz -S EAS.List.txt -Oz -o ./EAS/chr$i.1kg.phase3.v5a.EAS.vcf.gz >>$i.job
 qsub $i.job
 done
